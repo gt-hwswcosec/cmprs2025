@@ -56,30 +56,25 @@ mpr_map = {
     107:M107, 127:M127
 }
 
-num_trials = 10 # Run both tests many times to avoid BKM short cycles -- RUNTIME BOTTLENECK
+num_trials = 400 # Run both tests many times to avoid BKM short cycles -- RUNTIME BOTTLENECK
 
-for solution_group in mersenne_combinations(range(20)): # Specific CMPR size
+for solution_group in mersenne_combinations(range(20)): # Test CMPRs of size up to size 20
     for config, epr in solution_group[1]: # Specific CMPR configuration
         if len(config) > 1: # Only test configurations with >1 MPR
-            print(config)
-            alg_inaccurate = 0                
+            print(config)                
             C = CMPR([mpr_map[i] for i in config[::-1]])
+            C.generateChaining(template=old_ANF_template(max_and=4, max_xor=4))
+            C.compile()
+            alg_inaccurate = 0
             for i in range(num_trials):
                 print("Trial:" + str(i))
-                C.generateChaining(template=old_ANF_template(max_and=4, max_xor=4)) # Regenerate the chaining per-trial in case of short cycle (short cycles skew BKM results)
-                C.compile()
+                F = FeedbackRegister(random.randint(1, 2**C.size - 1), C)
                 # Estimation Algorithm
-                L = C.root_expressions()[0].lower()
-                U = C.root_expressions()[0].upper()
+                L, U = C.estimate_LC(0)
                 # Berlekamp-Massey
-                F = FeedbackRegister(2**C.size - 1, C) # Initialize to all 1s state
-                seq = [(state[0]) for state in F.run_compiled(2 * U + 1000)]
-                linear_complexity, feedback_polynomial = berlekamp_massey(seq)
-                if not(L <= linear_complexity <= U): # BKM result not in estimate interval?
+                seq = [state[0] for state in F.run_compiled(2*U + 1000)]
+                linear_complexity, feedback_polynomial = berlekamp_massey(seq) 
+                if not(L <= linear_complexity <= U) and (F.period_compiled() == C.max_period): # BKM result not in estimate interval and no short cycle?
                     alg_inaccurate += 1
                 
-            print("Probability that Estimation Algorithm is Correct: " + str(1 - (alg_inaccurate/num_trials))) # Accuracy
-             
-            
-            
-        
+            print("Probability that Estimation Algorithm is Correct: " + str(1 - (alg_inaccurate/num_trials))) # Accuracy        
