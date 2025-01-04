@@ -92,9 +92,8 @@ def swap_state(F:FeedbackRegister, odd_behavior=None, swap_blocks=2, orientation
         if (n % 2 != 0):
             raise ValueError("Register size must be even.")
         state = list(map(int, [*F]))
-        #F.seed(state[-n//2:] + state[:n//2])
-        F[:] = (state[-n//2:] + state[:n//2])
-        #F.reset()
+        F.seed(state[-n//2:] + state[:n//2])
+        F.reset()
         
         return
 
@@ -145,8 +144,8 @@ def swap_state(F:FeedbackRegister, odd_behavior=None, swap_blocks=2, orientation
     for i in reversed(range(len(start))):
         new_state += _partition_and_orient(state, start[i], end[i], orientation)
 
-    F[:] = new_state
-    #F.reset()
+    F.seed(new_state)
+    F.reset()
     return
 
 def _partition_and_orient(state, start_incl, end_excl, orientation):
