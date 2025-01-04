@@ -534,7 +534,7 @@ keystream_bit <= '0';
 elsif(clk'event and clk ='1') then
 case state is
 	when run =>
-		keystream_bit <= s_reg(0) xor s_reg(15) xor s_reg(31);
+		keystream_bit <= s_reg(0) xor s_reg(3) xor s_reg(7);
 	when setup =>
 end case;
 end if;
