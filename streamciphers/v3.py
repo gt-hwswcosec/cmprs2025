@@ -22,7 +22,7 @@ from ProductRegisters.Cryptanalysis.utility import *
 F = FeedbackRegister.from_file('C170_stored.json')
 F.fn.compile()
 
-def cmprtrivium_v3(key, iv, keystream_length):
+def cmprcipher_v3(key, iv, keystream_length):
     initrounds = 100
     initstate_iv = str2list(iv)
     initstate = str2list(key)
@@ -60,7 +60,7 @@ iv = generate_random_binary(84)
 j = 1
 for line in lines:
     key = line.strip()
-    keystream = cmprtrivium_v3(key, iv, 128)
+    keystream = cmprcipher_v3(key, iv, 128)
     fileout.write(keystream + '\n')
     print("Keystream #" + str(j) + " generated.")
     j += 1
