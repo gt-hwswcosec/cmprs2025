@@ -78,7 +78,8 @@ fileout.close()
 filein_keystreams = open('./keystreams.txt', 'r')
 lines_keystreams = filein_keystreams.readlines()
 xor_result = '0'*128
-for individual_keystream in lines_keystreams: # XOR all of the generated keystreams (equivalent to summing over a cube)
+for individual_keystream in lines_keystreams:
+    # XOR all of the generated keystreams (equivalent to summing over a cube)
     xor_result = ''.join('1' if b1 != b2 else '0' for b1, b2 in zip(xor_result, individual_keystream.strip()))
 
 print(xor_result)
