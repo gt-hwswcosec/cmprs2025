@@ -66,8 +66,9 @@ for solution_group in mersenne_combinations(range(20)): # Test CMPRs of size up 
             C.generateChaining(template=old_ANF_template(max_and=4, max_xor=4))
             C.compile()
             alg_inaccurate = 0
-            for i in range(num_trials):
-                print("Trial:" + str(i))
+            actual_trials = 0
+            while actual_trials < num_trials:
+                print("Trial:" + str(actual_trials))
                 F = FeedbackRegister(random.randint(1, 2**C.size - 1), C)
                 # Estimation Algorithm
                 L, U = C.estimate_LC(0)
@@ -76,5 +77,6 @@ for solution_group in mersenne_combinations(range(20)): # Test CMPRs of size up 
                 linear_complexity, feedback_polynomial = berlekamp_massey(seq) 
                 if not(L <= linear_complexity <= U) and (F.period_compiled() == C.max_period): # BKM result not in estimate interval and no short cycle?
                     alg_inaccurate += 1
-                
+                if F.period_compiled() == C.max_period: # Proceed to the next test only if no short cycle
+                    actual_trials += 1
             print("Probability that Estimation Algorithm is Correct: " + str(1 - (alg_inaccurate/num_trials))) # Accuracy        
