@@ -47,8 +47,10 @@ F = FeedbackRegister(2**C17.size-1,C17)
 F.clock_compiled()
 F.reset()
 
-num_init_rounds = 100 # Initialization Rounds (number of times the CMPR is clocked before generating output bits)
-keystream_length = 100 # Keystream Length (number of times the CMPR is clocked after initialization, AKA number of output bits)
+# Initialization Rounds (number of times the CMPR is clocked before generating output bits)
+num_init_rounds = 100
+# Keystream Length (number of times the CMPR is clocked after initialization, AKA number of output bits)
+keystream_length = 100
 
 # for the situation where  the CMPR is initialized to (key : IV : fixed bits) or a permutation thereof:
 # in this example:
@@ -60,8 +62,10 @@ key_start = 10 # Where in the CMPR initial state the key starts (zero-indexed)
 tweakable_bits = list(range(IV_start,key_start))
 known_bits = list(range(key_start))
 
-print("tweakable bits: ", tweakable_bits) # Bits of the initial state that can be tweaked by the user AND are public (IV)
-print("known bits: ", known_bits) # Bits of the initial state that are known to the user but not necessarily (IV, fixed bits)
+# Bits of the initial state that can be tweaked by the user AND are public (IV)
+print("tweakable bits: ", tweakable_bits)
+# Bits of the initial state that are known to the user but not necessarily (IV, fixed bits)
+print("known bits: ", known_bits)
 
 # Output function defined as a boolean function of the CMPR bits, in this example it is bit 0
 # Examples of other output functions: XOR(VAR(0), VAR(1)) corresponds to bit 0 XOR bit 1
