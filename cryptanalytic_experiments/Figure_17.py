@@ -22,35 +22,112 @@ from ProductRegisters.Cryptanalysis.utility import *
 
 # Other
 import matplotlib.pyplot as plt
-import csv
 
+# small helper functions:
+def num_monomials(anf):
+    return len(anf.args)
+
+def degree(anf):
+    deg = 0
+    for term in anf.args:
+        if type(term) != CONST:
+            deg = max(deg,len(term.args))
+    return deg
+
+# MPR and CMPR instantiation
+M7 = MPR(7, poly("1 + x + x^7"), poly("1 + x^5"))
+
+M5 = MPR(5, poly("1 + x^2 + x^5"), poly("1 + x + x^4"))
+
+M3 = MPR(3, poly("1 + x + x^3"), poly("1 + x^2"))
+
+M2 = MPR(2, poly("1 + x + x^2"), poly("1 + x"))
+
+C17 = CMPR([M7,M5,M3,M2])
+
+C17[0].add_arguments(BooleanFunction.construct_ANF( [ True, [6], [2, 3, 7, 13] ] )) # Observe that this chaining function contains a bit from the largest MPR (weakness)
+C17[1].add_arguments(BooleanFunction.construct_ANF( [ [2], [3], [4, 9, 11, 14] ] ))
+C17[2].add_arguments(BooleanFunction.construct_ANF( [ True, [10], [5, 7, 11, 15] ] ))
+C17[3].add_arguments(BooleanFunction.construct_ANF( [ [5], [7], [8, 9, 14, 15] ] ))
+C17[4].add_arguments(BooleanFunction.construct_ANF( [ [11], [13], [6, 7, 10, 16] ] ))
+C17[5].add_arguments(BooleanFunction.construct_ANF( [ True, [14], [10, 11, 12, 13] ] ))
+C17[7].add_arguments(BooleanFunction.construct_ANF( [ [10], [15], [11, 12, 13, 14] ] ))
+C17[8].add_arguments(BooleanFunction.construct_ANF( [ True, [10], [11, 12, 14, 16] ] ))
+C17[9].add_arguments(BooleanFunction.construct_ANF( [ [11], [12], [13, 14, 15, 16] ] ))
+
+C17.compile()
+
+# TRIVIUM definitions: https://www.ecrypt.eu.org/stream/p3ciphers/trivium/trivium_p3.pdf
+t1 = XOR(VAR(65),VAR(92))
+t2 = XOR(VAR(161),VAR(176))
+t3 = XOR(VAR(242),VAR(287))
+
+t1 = XOR(t1,AND(VAR(90),VAR(91)),VAR(170))
+t2 = XOR(t2,AND(VAR(174),VAR(175)),VAR(263))
+t3 = XOR(t3,AND(VAR(285),VAR(286)),VAR(68))
+
+updates = ([t3] + [VAR(i) for i in range(92)]     # bits 0-92      (93 total)
+        + [t1] + [VAR(i) for i in range(93,176)]  # bits 93-176    (84 total)
+        + [t2] + [VAR(i) for i in range(177,287)] # bits 177-287  (111 total)
+)
+
+trivium_update = FeedbackFunction(updates)
+trivium_update.compile()
+
+# using the same CMPR from the paper to replicate the graphs:
+T = trivium_update
+trivium_output = XOR(VAR(65), VAR(92), VAR(161), VAR(176), VAR(242), VAR(287))
+necessary_bits = trivium_output.idxs_used()
+print("Calculating ANFs for bits: ", necessary_bits)
+
+# tracking statistics
 num_cycles = 320
-degrees = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7]
-num_mons = [6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 12, 12, 12, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 13, 16, 16, 16, 16, 16, 16, 16, 16, 16, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 17, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 23, 23, 23, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 26, 29, 32, 44, 48, 48, 48, 51, 51, 51, 51, 51, 51, 52, 55, 67, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 68, 74, 98, 100, 100, 100, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 104, 116, 117, 117, 117, 120, 120, 120, 126, 129, 139, 138, 138, 138, 138, 138, 138, 138, 138, 138, 144, 159, 192, 195, 195, 195, 195, 195, 195, 196, 196, 196, 197, 233, 294, 294, 315, 345, 345, 345, 345, 345, 348, 360, 361, 364, 406, 550, 715, 790, 793, 826, 871, 869, 869, 869, 869, 869, 869, 869, 872, 884, 885, 885, 906, 1007, 1133, 1209, 1210, 1279, 1357, 1356, 1356, 1356, 1353, 1353, 1383, 1529, 1710, 1801, 1802, 1802, 1802, 1802, 1802, 1802, 1807, 1898, 2010, 2008, 2089, 2250, 2634, 3021, 3142, 3146, 3215, 3289, 3288, 3414, 3550, 3552, 3727, 3939, 3939, 4038, 4147, 4147, 4162, 4183, 4181, 4297, 4790, 5699, 6322, 7161, 9041, 10580, 11138, 11142, 11395, 11658, 11657, 11660, 12030, 13815, 15399, 15584]
-C17_monomials = []
-C17_degrees = []
+degrees = []
+num_mons = []
 
-with open("monomial_data.csv", mode="r") as file:
-    reader = csv.reader(file)
-    for i, row in enumerate(reader):
-        if (i >= 320):
-            break
-        a, b, c = row
-        C17_monomials.append(int(b))
-        C17_degrees.append(int(c))
+# main loop
+print("printing disabled due to large number of iterations, look at the graph instead")
+for i,anfs in enumerate(T.anf_iterator(num_cycles,bits = necessary_bits)):
+    # at time step zero, the functions are just VAR(bit). This is fine, but our helper functions
+    # arent compatible with this format. A more full implementation could fix this, but we can just
+    # skip this first cycle - it doesnt contain much useful information anyway.
+    if i == 0:
+        continue
 
-plt.title("Number of Monomials in Keystream Equation")
-plt.xlabel("Clock Cycle")
+    output_anf = trivium_output.compose(anfs).translate_ANF()
+
+    degrees.append(degree(output_anf))
+    num_mons.append(num_monomials(output_anf))
+
+# now compute degrees and number of monomials for 17-bit CMPR
+
+num_cycles = 17
+degrees_C17 = []
+num_mons_C17 = []
+
+for i,anfs in enumerate(C17.anf_iterator(num_cycles,bits = [0])):
+    if i == 0:
+        continue
+
+    degrees_C17.append(degree(anfs[0]))
+    num_mons_C17.append(num_monomials(anfs[0]))
+
+# extend the CMPR data using a statistical model
+C17_extra = list(np.random.normal(loc = 6257.5, scale = 55.9352304008842, size = 304))
+
+plt.title("Number of Monomials in Keystream Polynomial")
+plt.xlabel("Initialization Rounds")
 plt.ylabel("Number of Monomials")
-plt.scatter(range(num_cycles),C17_monomials, label='17-bit CMPR')
-plt.scatter(range(num_cycles),num_mons, label="Trivium")
+plt.scatter(range(len(num_mons_C17)),num_mons_C17, label='17-bit CMPR data')
+plt.scatter(range(len(num_mons_C17),len(num_mons_C17)+len(C17_extra)),C17_extra, label='17-bit CMPR Statistical Model')
+plt.scatter(range(num_cycles),num_mons, label="TRIVIUM")
 plt.legend(loc="upper left")
 plt.show()
 
-plt.title("Degree of Keystream Equation")
-plt.xlabel("Clock Cycle")
+plt.title("Degree of Monomials in Keystream Polynomial")
+plt.xlabel("Initialization Rounds")
 plt.ylabel("Degree")
-plt.scatter(range(num_cycles),C17_degrees, label='17-bit CMPR')
-plt.scatter(range(num_cycles),degrees, label="Trivium")
+plt.scatter(range(num_cycles),degrees_C17, label='17-bit CMPR')
+plt.scatter(range(num_cycles),degrees, label="TRIVIUM")
 plt.legend(loc="lower right")
 plt.show()
