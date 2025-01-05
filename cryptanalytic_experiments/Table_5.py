@@ -56,11 +56,15 @@ mpr_map = {
     107:M107, 127:M127
 }
 
-num_trials = 400 # Run both tests many times to avoid BKM short cycles -- RUNTIME BOTTLENECK
+# Run both tests many times to avoid BKM short cycles -- RUNTIME BOTTLENECK
+num_trials = 400
 
-for solution_group in mersenne_combinations(range(20)): # Test CMPRs of size up to size 20
-    for config, epr in solution_group[1]: # Specific CMPR configuration
-        if len(config) > 1: # Only test configurations with >1 MPR
+# Test CMPRs of size up to size 20
+for solution_group in mersenne_combinations(range(20)):
+    # Specific CMPR configuration
+    for config, epr in solution_group[1]:
+        # Only test configurations with >1 MPR
+        if len(config) > 1:
             print(config)                
             C = CMPR([mpr_map[i] for i in config[::-1]])
             C.generateChaining(template=old_ANF_template(max_and=4, max_xor=4))
@@ -74,9 +78,11 @@ for solution_group in mersenne_combinations(range(20)): # Test CMPRs of size up 
                 L, U = C.estimate_LC(0)
                 # Berlekamp-Massey
                 seq = [state[0] for state in F.run_compiled(2*U + 1000)]
-                linear_complexity, feedback_polynomial = berlekamp_massey(seq) 
-                if not(L <= linear_complexity <= U) and (F.period_compiled() == C.max_period): # BKM result not in estimate interval and no short cycle?
+                linear_complexity, feedback_polynomial = berlekamp_massey(seq)
+                # BKM result not in estimate interval and no short cycle?
+                if not(L <= linear_complexity <= U) and (F.period_compiled() == C.max_period):
                     alg_inaccurate += 1
-                if F.period_compiled() == C.max_period: # Proceed to the next test only if no short cycle
+                # Proceed to the next test only if no short cycle
+                if F.period_compiled() == C.max_period:
                     actual_trials += 1
-            print("Probability that Estimation Algorithm is Correct: " + str(1 - (alg_inaccurate/num_trials))) # Accuracy        
+            print("Probability that Estimation Algorithm is Correct: " + str(1 - (alg_inaccurate/num_trials)))       
