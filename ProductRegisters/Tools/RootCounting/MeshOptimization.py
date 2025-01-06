@@ -1,3 +1,6 @@
+# (c) 2025 Georgia Institute of Technology
+# This code is licensed under the MIT license (see LICENSE for details)
+
 # Linear Complexity and Monomial estimation
 from ProductRegisters.Tools.RootCounting.MonomialProfile import TermSet,MonomialProfile
 from ProductRegisters.Tools.RootCounting.JordanSet import JordanSet
