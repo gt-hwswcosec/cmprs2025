@@ -1,3 +1,6 @@
+# (c) 2025 Georgia Institute of Technology
+# This code is licensed under the MIT license (see LICENSE for details)
+
 import ProductRegisters.BooleanLogic.ChainingGeneration.TemplateBuilding as tb
 from ProductRegisters.BooleanLogic.ChainingGeneration.Templates.old_ANF_template import old_ANF_function
 from ProductRegisters.BooleanLogic.Gates import *
