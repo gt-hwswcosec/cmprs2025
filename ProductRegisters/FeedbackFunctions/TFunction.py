@@ -1,3 +1,6 @@
+# (c) 2025 Georgia Institute of Technology
+# This code is licensed under the MIT license (see LICENSE for details)
+
 from ProductRegisters.FeedbackFunctions import MPR, CMPR
 from ProductRegisters.BooleanLogic import AND, XOR, CONST, VAR
 
