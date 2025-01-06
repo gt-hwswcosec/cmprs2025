@@ -1,3 +1,6 @@
+# (c) 2025 Georgia Institute of Technology
+# This code is licensed under the MIT license (see LICENSE for details)
+
 from math import ceil, copysign
 
 # May be very optimiseable, but nicely leans on pythons integer
