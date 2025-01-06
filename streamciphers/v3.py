@@ -1,3 +1,6 @@
+# (c) 2025 Georgia Institute of Technology
+# This code is licensed under the MIT license (see LICENSE for details)
+
 # Basic constructs:
 from ProductRegisters.FeedbackRegister import FeedbackRegister
 from ProductRegisters.FeedbackFunctions import *
