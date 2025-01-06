@@ -1,3 +1,6 @@
+# (c) 2025 Georgia Institute of Technology
+# This code is licensed under the MIT license (see LICENSE for details)
+
 # leq_ordering(A,B) returns true if A <= B
 # input sets is an iterable of iterables.
 def maximalElements(leq_ordering, inputs):
