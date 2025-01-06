@@ -1,3 +1,6 @@
+# (c) 2025 Georgia Institute of Technology
+# This code is licensed under the MIT license (see LICENSE for details)
+
 from ProductRegisters.BooleanLogic import XOR, AND, VAR, CONST
 from ProductRegisters.FeedbackFunctions import FeedbackFunction
 from ProductRegisters.Tools.RegisterSynthesis.fcsrSynthesis import BM_FCSR
