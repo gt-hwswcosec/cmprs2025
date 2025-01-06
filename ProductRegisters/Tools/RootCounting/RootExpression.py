@@ -1,3 +1,6 @@
+# (c) 2025 Georgia Institute of Technology
+# This code is licensed under the MIT license (see LICENSE for details)
+
 from ProductRegisters.Tools.RootCounting.JordanSet import JordanSet
 from ProductRegisters.Tools.RootCounting.OverlappingRectangle import rectangle_solve
 from ProductRegisters.Tools.RootCounting.EvaluationFunctions import pessimistic_expected_value
