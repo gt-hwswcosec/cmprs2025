@@ -1,3 +1,6 @@
+# (c) 2025 Georgia Institute of Technology
+# This code is licensed under the MIT license (see LICENSE for details)
+
 from ProductRegisters.BooleanLogic import ANF_spec_repr, BooleanFunction, CONST
 from ProductRegisters.FeedbackFunctions import FeedbackFunction
 from ProductRegisters.Tools.RegisterSynthesis.lfsrSynthesis import berlekamp_massey
