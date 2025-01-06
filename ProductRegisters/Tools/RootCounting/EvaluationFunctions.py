@@ -1,3 +1,6 @@
+# (c) 2025 Georgia Institute of Technology
+# This code is licensed under the MIT license (see LICENSE for details)
+
 from ProductRegisters.Tools.RootCounting.Combinatorics import binsum
 
 def optimistic_evaluation(b,c):
