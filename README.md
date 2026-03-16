@@ -2,7 +2,7 @@ Artifacts for the foundational paper on CMPRs "Scalable Nonlinear Sequence Gener
 
 In this repository, we include the version of the Product Registers Library used to conduct experiments for the stream ciphers above journal paper, along with the source code used in our experiments.
 
-The library is lacking in documentation and missing guard rails, but we hope to improve this in the future. We have commented the library and code in this repository to the best of our ability.
+Our documentation should be understandable but may require improvement (please feel free to open an issue using the issues tab).  Furthermore, we lack production-quality error messages but are open to feedback for improvement.
 
 **Library Installation**
 
